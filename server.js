@@ -5,6 +5,7 @@ const morgan = require("morgan");
 const ConnectionDb = require("./config/db");
 const testRoute = require("./routes/testRoute");
 const authRoute = require("./routes/authRoutes");
+const userRoute = require("./routes/userRoutes");
 
 //PORT
 const PORT = process.env.PORT || 4001;
@@ -27,6 +28,9 @@ app.use("/api/v1/test", testRoute);
 
 //auth route
 app.use("/api/v1/auth", authRoute);
+
+//user route
+app.use("/api/v1/user", userRoute);
 
 app.get("/", (req, res) => {
   res.status(201).send("<h1>Welcome to Food Server</h1>");
