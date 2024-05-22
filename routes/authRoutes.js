@@ -4,7 +4,7 @@ const { registerController } = require("../controllers/authController");
 const router = express.Router();
 
 //router
-//REGISTER || POST
+//REGISTER || POST route
 router.post("/register",registerController)
 
 
