@@ -4,9 +4,10 @@ const cors = require("cors");
 const morgan = require("morgan");
 const ConnectionDb = require("./config/db");
 const testRoute = require("./routes/testRoute");
+const authRoute = require("./routes/authRoutes");
 
 //PORT
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 4001;
 
 //rest object
 const app = express();
@@ -23,6 +24,9 @@ app.use(morgan("short"));
 //route
 //URL=>http://localhost/:8080
 app.use("/api/v1/test", testRoute);
+
+//auth route
+app.use("/api/v1/auth", authRoute);
 
 app.get("/", (req, res) => {
   res.status(201).send("<h1>Welcome to Food Server</h1>");
