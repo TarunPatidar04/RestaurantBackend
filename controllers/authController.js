@@ -1,4 +1,6 @@
 const userModel = require("../models/userModel");
+const bcrypt = require("bcryptjs");
+const JWT = require("jsonwebtoken");
 
 const registerController = async (req, res) => {
   try {
@@ -21,11 +23,15 @@ const registerController = async (req, res) => {
       });
     }
 
+    //hashing password
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     //create new user
     const user = await userModel.create({
       userName,
       email,
-      password,
+      password: hashedPassword,
       address,
       phone,
     });
@@ -58,17 +64,34 @@ const loginController = async (req, res) => {
     }
 
     //check user
-    const user = await userModel.findOne({ email: email, password: password });
+    const user = await userModel.findOne({ email: email });
     if (!user) {
       return res.status(404).send({
         success: false,
-        message: "user not found and user & password are mismatched ",
+        message: "user not found",
       });
     }
+
+    //compare password | check user password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(500).send({
+        success: false,
+        message: "Invalid Credentials",
+      });
+    }
+
+    //token
+    const token = JWT.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    user.password = undefined;
 
     res.status(200).send({
       success: true,
       message: "User Logged In Successfully",
+      token,
       user,
     });
   } catch (error) {
