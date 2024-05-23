@@ -1,5 +1,6 @@
 // GET USER INFO
 const userModel = require("../models/userModel");
+const bcrypt = require("bcryptjs");
 const getUserControllers = async (req, res) => {
   try {
     const user = await userModel.findById({ _id: req.body.id });
@@ -62,7 +63,48 @@ const updateUserController = async (req, res) => {
   }
 };
 
+//RESET PASSWORD
+const resetPasswordController = async (req, res) => {
+  try {
+    const { email, newPassword, answer } = req.body;
+    if (!email || !newPassword || !answer) {
+      return res.status(500).send({
+        success: false,
+        message: "Please Provide all field",
+        error,
+      });
+    }
+
+    const user = await userModel.findOne({ email, answer });
+    if (!user) {
+      return res.status(500).send({
+        success: false,
+        message: "User not found and Invalid answer",
+      });
+    }
+
+    //hashing password
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    user.password = hashedPassword;
+    await user.save();
+    res.status(200).send({
+      success: true,
+      message: "Password Reset Successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error in Reset password  API",
+      error,
+    });
+  }
+};
+
 module.exports = {
   getUserControllers,
   updateUserController,
+  resetPasswordController,
 };
