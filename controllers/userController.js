@@ -103,7 +103,7 @@ const resetPasswordController = async (req, res) => {
   }
 };
 
-//RESET PASSWORD
+//UPDATE PASSWORD
 const updatePasswordController = async (req, res) => {
   try {
     //find user
@@ -133,7 +133,7 @@ const updatePasswordController = async (req, res) => {
         message: "Invalid Old Password",
       });
     }
-    
+
     //hashing password
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
@@ -153,9 +153,32 @@ const updatePasswordController = async (req, res) => {
     });
   }
 };
+
+//DELETE USER ACCOUNT
+const deleteUserController = async (req, res) => {
+  try {
+    //find user
+    const id = req.params.id;
+  
+    await userModel.findByIdAndDelete(id);
+    res.status(200).send({
+      success: true,
+      message: "User Deleted Successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error in Delete User API",
+      error,
+    });
+  }
+};
+
 module.exports = {
   getUserControllers,
   updateUserController,
   resetPasswordController,
   updatePasswordController,
+  deleteUserController,
 };
