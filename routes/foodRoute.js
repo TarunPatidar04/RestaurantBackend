@@ -5,6 +5,8 @@ const {
   getAllFoodController,
   getSingleFoodController,
   getFoodByRestaurantController,
+  updateFoodController,
+  deleteFoodController,
 } = require("../controllers/foodController");
 
 const router = express.Router();
@@ -19,7 +21,13 @@ router.get("/getAll", getAllFoodController);
 //get SINGLE FOOD
 router.get("/get/:id", getSingleFoodController);
 
-//get food by Gestorant
+//get food by Restorant
 router.get("/getbyRestaurant/:id", getFoodByRestaurantController);
+
+//UPDATE FOOD
+router.put("/update/:id", authMiddleware, updateFoodController);
+
+//DELETE FOOD
+router.delete("/delete/:id", authMiddleware, deleteFoodController);
 
 module.exports = router;

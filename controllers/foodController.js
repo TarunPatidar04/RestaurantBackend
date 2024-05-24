@@ -147,9 +147,108 @@ const getFoodByRestaurantController = async (req, res) => {
   }
 };
 
+// UPDATE FOOD BY ID
+const updateFoodController = async (req, res) => {
+  try {
+    const foodId = req.params.id;
+    //validation
+    if (!foodId) {
+      return res.status(404).send({
+        success: false,
+        message: "No food id was found",
+      });
+    }
+
+    const food = await foodModel.findById(foodId);
+    if (!food) {
+      return res.status(404).send({
+        success: false,
+        message: "Food not found with this Id",
+      });
+    }
+    const {
+      title,
+      description,
+      price,
+      imageUrl,
+      foodTags,
+      category,
+      code,
+      isAvailable,
+      restaurant,
+      rating,
+    } = req.body;
+    //update food
+    const updatedFood = await foodModel.findByIdAndUpdate(
+      foodId,
+      {
+        title,
+        description,
+        price,
+        imageUrl,
+        foodTags,
+        category,
+        code,
+        isAvailable,
+        restaurant,
+        rating,
+      },
+      { new: true }
+    );
+    res.status(200).send({
+      success: true,
+      message: "Food Item was Updated",
+      updatedFood,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      success: false,
+      message: "Error in Update food API",
+      error,
+    });
+  }
+};
+
+// DELETE FOOD BY ID
+const deleteFoodController = async (req, res) => {
+  try {
+    const foodId = req.params.id;
+    //validation
+    if (!foodId) {
+      return res.status(404).send({
+        success: false,
+        message: "No food id was found",
+      });
+    }
+
+    const food = await foodModel.findById(foodId);
+    if (!food) {
+      return res.status(404).send({
+        success: false,
+        message: "Food not found with this Id",
+      });
+    }
+    await foodModel.findByIdAndDelete(foodId);
+    res.status(200).send({
+      success: true,
+      message: "Food Item was Deleted",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      success: false,
+      message: "Error in Delete food API",
+      error,
+    });
+  }
+};
+
 module.exports = {
   createFoodController,
   getAllFoodController,
   getSingleFoodController,
   getFoodByRestaurantController,
+  updateFoodController,
+  deleteFoodController,
 };
