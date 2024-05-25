@@ -289,6 +289,42 @@ const createOrderController = async (req, res) => {
   }
 };
 
+//CREATE Order
+const orderStatusController = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    //validation
+    if (!orderId) {
+      return res.status(404).send({
+        success: false,
+        message: "No order id was found",
+      });
+    }
+    const { status } = req.body;
+    const order = await orderModel.findById(orderId, { status }, { new: true });
+    //validation
+    if (!order) {
+      return res.status(404).send({
+        success: false,
+        message: "Order not found with this Id",
+      });
+    }
+    await orderModel.findByIdAndUpdate(orderId, { status }, { new: true });
+    res.status(201).send({
+      success: true,
+      message: "Order Status Updated Successfully",
+      order,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      success: false,
+      message: "Error in order status API",
+      error,
+    });
+  }
+};
+
 module.exports = {
   createFoodController,
   getAllFoodController,
@@ -297,4 +333,5 @@ module.exports = {
   updateFoodController,
   deleteFoodController,
   createOrderController,
+  orderStatusController,
 };
