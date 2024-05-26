@@ -9,6 +9,7 @@ const userRoute = require("./routes/userRoutes");
 const restaurantRoute = require("./routes/restaurantRoute");
 const categoryRoute = require("./routes/categoryRoute");
 const foodRoute = require("./routes/foodRoute");
+const foodImageRoute = require("./routes/foodImageRoute");
 
 //PORT
 const PORT = process.env.PORT || 4001;
@@ -43,6 +44,9 @@ app.use("/api/v1/category", categoryRoute);
 
 //food route
 app.use("/api/v1/food", foodRoute);
+
+//food Image route
+app.use("/api/v1/image", foodImageRoute);
 
 app.get("/", (req, res) => {
   res.status(201).send("<h1>Welcome to Food Server</h1>");
